@@ -1,0 +1,15 @@
+{
+  "error": {
+    "400": "It's an invalid request. Generally, this occurs due to the user's incorrect input or request.",
+    "401": "Authentication is required. This occurs when the user has not provided valid authentication.",
+    "403": "Access is forbidden. The user does not have permission to access this page.",
+    "404": "The page cannot be found. The requested page does not exist.",
+    "500": "An internal server error has occurred. This error is due to a problem on the server. Please contact the administrator.",
+    "502": "It's a gateway error. The server received an invalid response from another server. Please contact the administrator.",
+    "503": "The service is unavailable. The server is temporarily unable to handle the request. Please contact the administrator.",
+    "unknown": "An unknown error has occurred. The exact cause is unknown. Please contact the administrator."
+  },
+  "etc": {
+    "dark_btn": "Toggle Light/Dark Mode"
+  }
+}

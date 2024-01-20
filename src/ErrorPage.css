@@ -1,0 +1,71 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: lightgrey; /* 기본 모드의 배경색 */
+  height: 100vh;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
+}
+
+.error-image {
+  width: 40%; /* 데스크톱에서의 이미지 크기 */
+  max-width: 400px; /* 데스크톱에서의 최대 이미지 크기 */
+  margin-bottom: 20px;
+}
+
+/* 모바일 화면에 대한 미디어 쿼리 */
+@media (max-width: 768px) {
+  .error-image {
+    width: 80%; /* 모바일에서는 이미지를 좀 더 크게 보여주기 위해 너비 비율 증가 */
+    max-width: none; /* 모바일에서는 최대 너비 제한 없음 */
+  }
+}
+
+.error-message {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  /* margin-bottom 제거 */
+}
+
+.error-detail {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #34495e;
+  margin-bottom: 50px;
+}
+
+.settings-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* 컴포넌트 간의 간격 */
+  margin-bottom: 20px; /* 설정 컨테이너와 이미지 간 간격 */
+}
+
+/* 다크 모드에 대응하는 미디어 쿼리 */
+@media (prefers-color-scheme: dark) {
+  .error-container {
+    background-color: #343a40; /* 다크 모드의 배경색 */
+  }
+
+  .error-message,
+  .error-detail {
+    color: #f8f9fa; /* 다크 모드의 텍스트 색상 */
+  }
+}
+
+/* dark-mode 스타일 */
+.error-container.dark-mode {
+  background-color: #343a40; /* 다크 모드의 배경색 */
+}
+
+.error-container.dark-mode .error-message,
+.error-container.dark-mode .error-detail {
+  color: #f8f9fa; /* 다크 모드의 텍스트 색상 */
+}

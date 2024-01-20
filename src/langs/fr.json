@@ -1,0 +1,15 @@
+{
+  "error": {
+    "400": "C'est une demande invalide. Généralement, cela est dû à une saisie ou une demande incorrecte de l'utilisateur.",
+    "401": "Une authentification est requise. Cela se produit lorsque l'utilisateur n'a pas fourni une authentification valide.",
+    "403": "L'accès est interdit. L'utilisateur n'a pas la permission d'accéder à cette page.",
+    "404": "La page ne peut pas être trouvée. La page demandée n'existe pas.",
+    "500": "Une erreur interne du serveur s'est produite. Cette erreur est due à un problème sur le serveur. Veuillez contacter l'administrateur.",
+    "502": "C'est une erreur de passerelle. Le serveur a reçu une réponse invalide d'un autre serveur. Veuillez contacter l'administrateur.",
+    "503": "Le service n'est pas disponible. Le serveur est temporairement incapable de traiter la demande. Veuillez contacter l'administrateur.",
+    "unknown": "Une erreur inconnue s'est produite. La cause exacte est inconnue. Veuillez contacter l'administrateur."
+  },
+  "etc": {
+    "dark_btn": "Basculer entre le mode clair et sombre"
+  }
+}
