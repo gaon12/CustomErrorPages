@@ -62,6 +62,27 @@ server {
 
 이후 Nginx를 재시작합니다.
 
+4. error 폴더로 들어간 후, Apache2 엔진인 경우 .htaccess 파일(없으면 생성)을 다음과 같이 수정합니다.
+```htaccess
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QSA,L]
+```
+
+Nginx 엔진인 경우에는 서버 설정 파일에 다음 설정을 추가합니다.
+```conf
+location /error {
+    try_files $uri $uri/ /error/index.html;
+}
+```
+
+# 폴더명 변경
+[폴더명_변경](./README/폴더명_변경.md) 문서를 참고해주세요.
+
+# 데모
+[https://wtrip.uiharu.dev/error](https://wtrip.uiharu.dev/error)에서 데모를 확인할 수 있습니다. 예를 들어 404 에러는 [https://wtrip.uiharu.dev/error/404](https://wtrip.uiharu.dev/error/404)에서 확인할 수 있습니다.
+
 # 기여
 언제나 기여는 환영입니다!
 

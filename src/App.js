@@ -16,7 +16,7 @@ const ErrorCodeRoute = () => {
 };
 
 const App = () => (
-  <Router>
+  <Router basename="/error">
     <Routes>
       {/* 숫자 에러 코드에 대한 라우트 */}
       <Route path="/:errorCode" element={<ErrorCodeRoute />} />

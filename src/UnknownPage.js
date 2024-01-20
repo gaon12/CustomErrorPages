@@ -44,7 +44,7 @@ const UnknownPage = () => {
     const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
     link.type = 'image/png';
     link.rel = 'shortcut icon';
-    link.href = '/res/favicon/2.png';
+    link.href = '/error/res/favicon/2.png';
     document.getElementsByTagName('head')[0].appendChild(link);
 
     // 메타 태그 theme-color 변경
@@ -77,7 +77,7 @@ const UnknownPage = () => {
 
   return (
     <div className={`error-container ${darkMode ? 'dark-mode' : 'light-mode'}`}>
-      <img src="/res/characters/2.png" alt="캐릭터" className="error-image" />
+      <img src="/error/res/characters/2.png" alt="캐릭터" className="error-image" />
       <div className="error-message">Unknown Page</div> {/* 고정된 헤더 메시지 */}
       <p className="error-detail">{errorMessage}</p> {/* 오류 상세 메시지 */}
 
