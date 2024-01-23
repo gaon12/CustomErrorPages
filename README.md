@@ -2,11 +2,11 @@
 ## 만든 목적
 그저 밍밍한 에러 페이지를 깔끔하게 보이기 위해 만들었습니다.
 
-![아파치 에러 페이지](./REAMDE/src/res/imgs/apache2_error.png)
+![아파치 에러 페이지](./README_ETC/src/res/imgs/apache2_error.png)
 
 이 멋없는 디자인 대신
 
-![커스텀 에러 페이지 예시](./REAMDE/src/res/imgs/example.png)
+![커스텀 에러 페이지 예시](./README_ETC/src/res/imgs/example.png)
 
 이렇게 바꿔보면 어떨까요?
 
@@ -78,7 +78,7 @@ location /error {
 ```
 
 # 폴더명 변경
-[폴더명_변경](./README/폴더명_변경.md) 문서를 참고해주세요.
+[폴더명_변경](./README_ETC/폴더명_변경.md) 문서를 참고해주세요.
 
 # 데모
 [https://wtrip.uiharu.dev/error](https://wtrip.uiharu.dev/error)에서 데모를 확인할 수 있습니다. 예를 들어 404 에러는 [https://wtrip.uiharu.dev/error/404](https://wtrip.uiharu.dev/error/404)에서 확인할 수 있습니다.
