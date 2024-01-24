@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Select, Button } from "antd";
 import "./ErrorPage.css"; // 동일한 CSS 파일을 사용
 
@@ -20,6 +20,32 @@ const UnknownPage = () => {
   const [language, setLanguage] = useState(getLanguage().toLowerCase());
   const [darkMode, setDarkMode] = useState(getInitialMode());
 
+  // 상위 요소(body)에 overflow-y: hidden; 적용
+  useEffect(() => {
+    // 상위 요소 선택
+    const parentElement = document.body; // body를 사용
+
+    // 상위 요소의 원래 overflow-y 스타일 저장
+    const originalOverflowY = parentElement.style.overflowY;
+
+    // 상위 요소의 overflow-y를 hidden으로 설정
+    parentElement.style.overflowY = "hidden";
+
+    // 컴포넌트가 언마운트될 때 원래 스타일로 되돌림
+    return () => {
+      parentElement.style.overflowY = originalOverflowY;
+    };
+  }, []);
+
+  // saveMode 함수를 useCallback으로 메모이제이션
+  const saveMode = useCallback(
+    (mode) => {
+      localStorage.setItem("darkMode", mode);
+      localStorage.setItem("language", language);
+    },
+    [language]
+  ); // language가 변경될 때만 함수를 새로 생성
+
   useEffect(() => {
     const loadLanguageFile = async () => {
       try {
@@ -37,7 +63,7 @@ const UnknownPage = () => {
     };
 
     loadLanguageFile();
-	saveMode(getLanguage()); // language 상태를 저장
+    saveMode(getLanguage()); // language 상태를 저장
     saveMode(darkMode);
 
     // 브라우저 탭 타이틀 업데이트
@@ -55,7 +81,7 @@ const UnknownPage = () => {
     // 메타 태그 theme-color 변경
     const metaThemeColor = document.querySelector("meta[name='theme-color']");
     metaThemeColor.setAttribute("content", "#e8d3c3");
-  }, [language, darkMode]);
+  }, [language, darkMode, saveMode]);
 
   function getLanguage() {
     const savedLanguage = localStorage.getItem("language");
@@ -65,11 +91,6 @@ const UnknownPage = () => {
   function getInitialMode() {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode === "true" ? true : false;
-  }
-
-  function saveMode(mode) {
-    localStorage.setItem("darkMode", mode);
-    localStorage.setItem("language", language);
   }
 
   function handleLanguageChange(value) {

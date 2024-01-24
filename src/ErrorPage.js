@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Select, Button } from "antd";
 import "./ErrorPage.css";
@@ -21,6 +21,32 @@ const ErrorPage = () => {
   const [darkBtnText, setDarkBtnText] = useState(""); // 다크모드 버튼 텍스트 상태
   const [language, setLanguage] = useState(getLanguage().toLowerCase());
   const [darkMode, setDarkMode] = useState(getInitialMode());
+
+  // 상위 요소(body)에 overflow-y: hidden; 적용
+  useEffect(() => {
+    // 상위 요소 선택
+    const parentElement = document.body; // body를 사용
+
+    // 상위 요소의 원래 overflow-y 스타일 저장
+    const originalOverflowY = parentElement.style.overflowY;
+
+    // 상위 요소의 overflow-y를 hidden으로 설정
+    parentElement.style.overflowY = "hidden";
+
+    // 컴포넌트가 언마운트될 때 원래 스타일로 되돌림
+    return () => {
+      parentElement.style.overflowY = originalOverflowY;
+    };
+  }, []);
+
+  // saveMode 함수를 useCallback으로 메모이제이션
+  const saveMode = useCallback(
+    (mode) => {
+      localStorage.setItem("darkMode", mode);
+      localStorage.setItem("language", language);
+    },
+    [language]
+  ); // language가 변경될 때만 함수를 새로 생성
 
   useEffect(() => {
     const loadLanguageFile = async () => {
@@ -57,7 +83,7 @@ const ErrorPage = () => {
     // 메타 태그 theme-color 변경
     const metaThemeColor = document.querySelector("meta[name='theme-color']");
     metaThemeColor.setAttribute("content", "#d3a281");
-  }, [language, darkMode, errorCode]);
+  }, [language, darkMode, errorCode, saveMode]);
 
   function getLanguage() {
     const savedLanguage = localStorage.getItem("language");
@@ -67,11 +93,6 @@ const ErrorPage = () => {
   function getInitialMode() {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode === "true" ? true : false;
-  }
-
-  function saveMode(mode) {
-    localStorage.setItem("darkMode", mode);
-    localStorage.setItem("language", language);
   }
 
   function handleLanguageChange(value) {
