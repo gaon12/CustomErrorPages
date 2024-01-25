@@ -81,7 +81,7 @@ location /error {
 [폴더명_변경](./README_ETC/폴더명_변경.md) 문서를 참고해주세요.
 
 # 데모
-[https://wtrip.uiharu.dev/error](https://wtrip.uiharu.dev/error)에서 데모를 확인할 수 있습니다. 예를 들어 404 에러는 [https://wtrip.uiharu.dev/error/404](https://wtrip.uiharu.dev/error/404)에서 확인할 수 있습니다.
+[https://error.uiharu.dev/error](https://error.uiharu.dev/error)에서 데모를 확인할 수 있습니다. 예를 들어 404 에러는 [https://error.uiharu.dev/error/404](https://error.uiharu.dev/error/404)에서 확인할 수 있습니다.
 
 # 기여
 언제나 기여는 환영입니다!
