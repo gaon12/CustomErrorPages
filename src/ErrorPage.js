@@ -87,7 +87,19 @@ const ErrorPage = () => {
 
   function getLanguage() {
     const savedLanguage = localStorage.getItem("language");
-    return savedLanguage || navigator.language || navigator.userLanguage;
+    if (savedLanguage) {
+      return savedLanguage;
+    }
+    const browserLanguage = (navigator.language || navigator.userLanguage).toLowerCase();
+  
+    // 'zh-cn'과 'zh-tw'의 경우 특별하게 처리
+    if (browserLanguage === "zh-cn" || browserLanguage === "zh-tw") {
+      return browserLanguage;
+    }
+  
+    // 다른 언어 설정의 경우 첫 부분만 사용 (예: 'ko-KR' -> 'ko')
+    const languagePrefix = browserLanguage.split('-')[0];
+    return languageOptions.find(option => option.value.startsWith(languagePrefix))?.value || "en";
   }
 
   function getInitialMode() {
