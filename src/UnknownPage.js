@@ -53,12 +53,16 @@ const UnknownPage = () => {
           ? language.replace("-", "_")
           : language;
         const messages = await import(`./langs/${langCode}.json`);
-        setErrorMessage(messages.default.error["unknown"]); // 'unknown' 오류 메시지 설정
-        setDarkBtnText(messages.default.etc.dark_btn); // 'dark_btn' 텍스트 설정
+
+        const errorMessages = messages.default.error;
+        const message = errorMessages["unknown"];
+
+        setErrorMessage(message);
+        setDarkBtnText(messages.default.etc.dark_btn);
       } catch {
         const messages = await import(`./langs/en.json`);
-        setErrorMessage(messages.default.error["unknown"]); // 예외 처리 시 'unknown' 오류 메시지 설정
-        setDarkBtnText(messages.default.etc.dark_btn); // 'dark_btn' 텍스트 설정 (예외 처리)
+        setErrorMessage(messages.default.error["unknown"]);
+        setDarkBtnText(messages.default.etc.dark_btn);
       }
     };
 
@@ -75,12 +79,12 @@ const UnknownPage = () => {
       document.createElement("link");
     link.type = "image/png";
     link.rel = "shortcut icon";
-    link.href = "/error/res/favicon/2.png";
+    link.href = "/error/res/favicon/1.png";
     document.getElementsByTagName("head")[0].appendChild(link);
 
     // 메타 태그 theme-color 변경
     const metaThemeColor = document.querySelector("meta[name='theme-color']");
-    metaThemeColor.setAttribute("content", "#e8d3c3");
+    metaThemeColor.setAttribute("content", "#d3a281");
   }, [language, darkMode, saveMode]);
 
   function getLanguage() {

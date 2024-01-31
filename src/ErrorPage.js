@@ -55,7 +55,13 @@ const ErrorPage = () => {
           ? language.replace("-", "_")
           : language;
         const messages = await import(`./langs/${langCode}.json`);
-        setErrorMessage(messages.default.error["unknown"]);
+
+        // 에러 코드에 따른 메시지 로드
+        const errorKey = errorCode.toString(); // URL 파라미터는 문자열이므로, toString 호출은 선택적
+        const errorMessages = messages.default.error;
+        const message = errorMessages[errorKey] || errorMessages["unknown"];
+
+        setErrorMessage(message);
         setDarkBtnText(messages.default.etc.dark_btn);
       } catch {
         const messages = await import(`./langs/en.json`);
