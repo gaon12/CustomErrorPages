@@ -15,38 +15,11 @@ const languageOptions = [
   { value: "ar", label: "العربية" },
 ];
 
-const ErrorPage = () => {
-  const { errorCode } = useParams();
+const ErrorPage = ({ errorCode }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [darkBtnText, setDarkBtnText] = useState(""); // 다크모드 버튼 텍스트 상태
-  const [language, setLanguage] = useState(getLanguage().toLowerCase());
+  const [language, setLanguage] = useState(getInitialLanguage());
   const [darkMode, setDarkMode] = useState(getInitialMode());
-
-  // 상위 요소(body)에 overflow-y: hidden; 적용
-  useEffect(() => {
-    // 상위 요소 선택
-    const parentElement = document.body; // body를 사용
-
-    // 상위 요소의 원래 overflow-y 스타일 저장
-    const originalOverflowY = parentElement.style.overflowY;
-
-    // 상위 요소의 overflow-y를 hidden으로 설정
-    parentElement.style.overflowY = "hidden";
-
-    // 컴포넌트가 언마운트될 때 원래 스타일로 되돌림
-    return () => {
-      parentElement.style.overflowY = originalOverflowY;
-    };
-  }, []);
-
-  // saveMode 함수를 useCallback으로 메모이제이션
-  const saveMode = useCallback(
-    (mode) => {
-      localStorage.setItem("darkMode", mode);
-      localStorage.setItem("language", language);
-    },
-    [language]
-  ); // language가 변경될 때만 함수를 새로 생성
 
   useEffect(() => {
     const loadLanguageFile = async () => {
@@ -56,14 +29,14 @@ const ErrorPage = () => {
           : language;
         const messages = await import(`./langs/${langCode}.json`);
 
-        // 에러 코드에 따른 메시지 로드
-        const errorKey = errorCode.toString(); // URL 파라미터는 문자열이므로, toString 호출은 선택적
+        const errorKey = errorCode ? errorCode.toString() : "unknown";
         const errorMessages = messages.default.error;
         const message = errorMessages[errorKey] || errorMessages["unknown"];
 
         setErrorMessage(message);
         setDarkBtnText(messages.default.etc.dark_btn);
-      } catch {
+      } catch (e) {
+        console.error("Failed to load language file", e);
         const messages = await import(`./langs/en.json`);
         setErrorMessage(messages.default.error["unknown"]);
         setDarkBtnText(messages.default.etc.dark_btn);
@@ -71,71 +44,97 @@ const ErrorPage = () => {
     };
 
     loadLanguageFile();
-    saveMode(getLanguage()); // language 상태를 저장
-    saveMode(darkMode);
 
-    // 브라우저 탭 타이틀 업데이트
-    document.title = `Error ${errorCode}`;
+    document.title = errorCode ? `Error ${errorCode}` : "Unknown Error";
 
-    // 파비콘 변경
     const link =
       document.querySelector("link[rel*='icon']") ||
       document.createElement("link");
     link.type = "image/png";
     link.rel = "shortcut icon";
-    link.href = "/error/res/favicon/1.png";
+    link.href = "/res/favicon/1.png";
     document.getElementsByTagName("head")[0].appendChild(link);
 
-    // 메타 태그 theme-color 변경
     const metaThemeColor = document.querySelector("meta[name='theme-color']");
     metaThemeColor.setAttribute("content", "#d3a281");
-  }, [language, darkMode, errorCode, saveMode]);
+  }, [language, darkMode, errorCode]);
 
-  function getLanguage() {
-    const savedLanguage = localStorage.getItem("language");
-    if (savedLanguage) {
-      return savedLanguage;
+  const saveMode = useCallback(
+    (mode) => {
+      try {
+        localStorage.setItem("darkMode", mode);
+        localStorage.setItem("language", language);
+      } catch (e) {
+        console.error("Failed to save mode", e);
+      }
+    },
+    [language]
+  );
+
+  function getInitialLanguage() {
+    try {
+      const savedLanguage = localStorage.getItem("language");
+      if (savedLanguage) {
+        return savedLanguage;
+      }
+    } catch (e) {
+      console.error("Failed to get initial language", e);
     }
     const browserLanguage = (navigator.language || navigator.userLanguage).toLowerCase();
-  
-    // 'zh-cn'과 'zh-tw'의 경우 특별하게 처리
+
     if (browserLanguage === "zh-cn" || browserLanguage === "zh-tw") {
       return browserLanguage;
     }
-  
-    // 다른 언어 설정의 경우 첫 부분만 사용 (예: 'ko-KR' -> 'ko')
     const languagePrefix = browserLanguage.split('-')[0];
     return languageOptions.find(option => option.value.startsWith(languagePrefix))?.value || "en";
   }
 
   function getInitialMode() {
-    const savedMode = localStorage.getItem("darkMode");
-    return savedMode === "true" ? true : false;
+    try {
+      const savedMode = localStorage.getItem("darkMode");
+      return savedMode === "true";
+    } catch (e) {
+      console.error("Failed to get initial mode", e);
+      return false;
+    }
   }
 
   function handleLanguageChange(value) {
     setLanguage(value);
-    localStorage.setItem("language", value); // 선택된 언어를 로컬 저장소에 저장
+    try {
+      localStorage.setItem("language", value);
+    } catch (e) {
+      console.error("Failed to set language", e);
+    }
   }
 
   function toggleDarkMode() {
-    setDarkMode((prevMode) => !prevMode); // 이전 모드의 반대값으로 상태 업데이트
+    setDarkMode((prevMode) => {
+      const newMode = !prevMode;
+      try {
+        localStorage.setItem("darkMode", newMode);
+      } catch (e) {
+        console.error("Failed to set dark mode", e);
+      }
+      saveMode(newMode);
+      return newMode;
+    });
   }
 
   return (
     <div className={`error-container ${darkMode ? "dark-mode" : "light-mode"}`}>
       <img
-        src="/error/res/characters/1.png"
+        src={errorCode ? "/res/characters/1.png" : "/res/characters/2.png"}
         alt="캐릭터"
         className="error-image"
       />
-      <div className="error-message">{errorCode}</div>
+      <div className="error-message">{errorCode || "Unknown Page"}</div>
       <p className="error-detail">{errorMessage}</p>
 
       {/* 언어 변경 및 모드 변경 버튼 컨테이너 */}
       <div className="settings-container">
         <Select
-          defaultValue={language}
+          value={language}
           style={{ width: 120 }}
           onChange={handleLanguageChange}
           options={languageOptions}

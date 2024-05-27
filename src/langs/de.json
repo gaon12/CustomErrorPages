@@ -4,6 +4,7 @@
     "401": "Authentifizierung ist erforderlich. Dies tritt auf, wenn der Benutzer keine gültige Authentifizierung bereitgestellt hat.",
     "403": "Zugriff ist verboten. Der Benutzer hat keine Berechtigung, auf diese Seite zuzugreifen.",
     "404": "Die Seite kann nicht gefunden werden. Die angeforderte Seite existiert nicht.",
+    "414": "Die URL ist zu lang. Kürzen Sie die URL und versuchen Sie es erneut.",
     "500": "Ein interner Serverfehler ist aufgetreten. Dieser Fehler ist auf ein Problem auf dem Server zurückzuführen. Bitte kontaktieren Sie den Administrator.",
     "502": "Es liegt ein Gateway-Fehler vor. Der Server hat eine ungültige Antwort von einem anderen Server erhalten. Bitte kontaktieren Sie den Administrator.",
     "503": "Der Dienst ist nicht verfügbar. Der Server kann die Anfrage vorübergehend nicht bearbeiten. Bitte kontaktieren Sie den Administrator.",

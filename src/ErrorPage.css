@@ -1,16 +1,14 @@
 .error-container {
+  overflow-y: hidden;
+  height: 100vh; /* Viewport height */
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background-color: lightgrey; /* 기본 모드의 배경색 */
-  height: 100vh;
-  margin: 0;
+  align-items: center;
+  text-align: center;
   padding: 20px;
   box-sizing: border-box;
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  transition: background-color 0.3s; /* 부드러운 색상 전환 효과 */
+  background-color: #d3d3d3;
 }
 
 .error-image {

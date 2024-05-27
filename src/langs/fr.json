@@ -4,6 +4,7 @@
     "401": "Une authentification est requise. Cela se produit lorsque l'utilisateur n'a pas fourni une authentification valide.",
     "403": "L'accès est interdit. L'utilisateur n'a pas la permission d'accéder à cette page.",
     "404": "La page ne peut pas être trouvée. La page demandée n'existe pas.",
+    "414": "L'URL est trop longue. Veuillez raccourcir l'URL et réessayer.",
     "500": "Une erreur interne du serveur s'est produite. Cette erreur est due à un problème sur le serveur. Veuillez contacter l'administrateur.",
     "502": "C'est une erreur de passerelle. Le serveur a reçu une réponse invalide d'un autre serveur. Veuillez contacter l'administrateur.",
     "503": "Le service n'est pas disponible. Le serveur est temporairement incapable de traiter la demande. Veuillez contacter l'administrateur.",
