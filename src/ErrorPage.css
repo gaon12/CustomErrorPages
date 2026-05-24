@@ -1,36 +1,35 @@
 .error-container {
-  overflow-y: hidden;
-  height: 100vh; /* Viewport height */
+  position: relative;
+  overflow-y: auto;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
+  padding: 80px 20px 40px;
   box-sizing: border-box;
   background-color: #d3d3d3;
 }
 
 .error-image {
-  width: 40%; /* 데스크톱에서의 이미지 크기 */
-  max-width: 400px; /* 데스크톱에서의 최대 이미지 크기 */
+  width: min(40vw, 400px);
+  min-width: 220px;
   margin-bottom: 20px;
 }
 
-/* 모바일 화면에 대한 미디어 쿼리 */
 @media (max-width: 768px) {
   .error-image {
-    width: 80%; /* 모바일에서는 이미지를 좀 더 크게 보여주기 위해 너비 비율 증가 */
-    max-width: none; /* 모바일에서는 최대 너비 제한 없음 */
-    margin-top: 10px; /* 모바일에서 이미지 상단 여백 적용 */
+    width: min(80vw, 360px);
+    margin-top: 10px;
   }
 
   .error-container {
-    padding: 10px; /* 모바일에서의 컨테이너 패딩 감소 */
+    padding: 10px;
   }
 
   .settings-container {
-    margin-bottom: 10px; /* 모바일에서의 버튼 하단 여백, 이미지 상단 여백과 동일하게 적용 */
+    margin-bottom: 10px;
   }
 }
 
@@ -38,25 +37,37 @@
   font-size: 2rem;
   font-weight: bold;
   color: #2c3e50;
+  margin: 0;
+  line-height: 1.1;
+  text-wrap: balance;
 }
 
 .error-detail {
   font-size: 1.2rem;
   font-weight: bold;
   color: #34495e;
-  margin-bottom: 50px;
+  line-height: 1.55;
+  margin: 12px 0 0;
+  max-width: min(680px, 100%);
+  white-space: pre-line;
+  text-wrap: pretty;
 }
 
 .settings-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px; /* 컴포넌트 간의 간격 */
-  margin-bottom: 20px; /* 설정 컨테이너와 이미지 간 간격 */
+  gap: 10px;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .language-select,
-.mode-button {
+.icon-button {
   min-height: 36px;
   border-radius: 6px;
   font: inherit;
@@ -64,45 +75,94 @@
 }
 
 .language-select {
-  width: 140px;
+  width: 128px;
   border: 1px solid #d9d9d9;
   background: #ffffff;
   color: #2c3e50;
   padding: 0 32px 0 12px;
 }
 
-.mode-button {
+.icon-button {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #1677ff;
   background: #1677ff;
   color: #ffffff;
   cursor: pointer;
-  font-weight: 600;
-  padding: 0 15px;
+  padding: 0;
 }
 
-.mode-button:hover {
+.icon-button:hover {
   background: #4096ff;
   border-color: #4096ff;
 }
 
-/* 다크 모드에 대응하는 미디어 쿼리 */
-@media (prefers-color-scheme: dark) {
-  .error-container {
-    background-color: #343a40; /* 다크 모드의 배경색 */
-  }
-
-  .error-message,
-  .error-detail {
-    color: #f8f9fa; /* 다크 모드의 텍스트 색상 */
-  }
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
-/* dark-mode 스타일 */
+.home-link {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: #2c3e50;
+  color: #ffffff;
+  font-weight: 700;
+  margin-top: 36px;
+  padding: 0 18px;
+  text-decoration: none;
+}
+
+.home-link:hover {
+  background: #3d566e;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .error-container.dark-mode {
-  background-color: #343a40; /* 다크 모드의 배경색 */
+  background-color: #343a40;
 }
 
 .error-container.dark-mode .error-message,
 .error-container.dark-mode .error-detail {
-  color: #f8f9fa; /* 다크 모드의 텍스트 색상 */
+  color: #f8f9fa;
+}
+
+.error-container.dark-mode .home-link {
+  background: #f8f9fa;
+  color: #2c3e50;
+}
+
+@media (max-width: 480px) {
+  .error-container {
+    padding-top: 92px;
+  }
+
+  .settings-container {
+    left: 10px;
+    right: 10px;
+    justify-content: flex-end;
+  }
+
+  .error-detail {
+    font-size: 1.05rem;
+  }
 }

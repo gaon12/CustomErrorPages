@@ -51,6 +51,54 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("treats unsupported numeric routes as unknown pages", async () => {
+    renderAt("/error/999");
+
+    expect(await screen.findByText("Unknown Page")).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        "An unknown error has occurred. The exact cause is unknown. Please contact the administrator.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("uses the app base path for public image assets", async () => {
+    renderAt("/error/404");
+
+    const image = await screen.findByRole("img", { name: "캐릭터" });
+    expect(image).toHaveAttribute(
+      "src",
+      `${import.meta.env.BASE_URL}res/characters/1.png`,
+    );
+  });
+
+  it("renders a custom message from the message query parameter", async () => {
+    renderAt("/error/500?message=Please%20try%20again%20later");
+
+    expect(await screen.findByText("500")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Please try again later"),
+    ).toBeInTheDocument();
+  });
+
+  it("renders a home link from the homeUrl query parameter", async () => {
+    renderAt("/error/500?homeUrl=%2F");
+
+    expect(await screen.findByRole("link", { name: "Home" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+  });
+
+  it("ignores unsafe homeUrl query parameters", async () => {
+    renderAt("/error/500?homeUrl=javascript%3Aalert(1)");
+
+    await screen.findByText("500");
+    expect(
+      screen.queryByRole("link", { name: "Home" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("persists language changes and updates the message", async () => {
     const user = userEvent.setup();
     renderAt("/error/404");

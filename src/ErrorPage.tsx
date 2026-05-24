@@ -1,145 +1,45 @@
 import { useEffect, useState } from "react";
-
+import { getPageQueryParams } from "./config/queryParams";
+import {
+  getStoredDarkMode,
+  getStoredLanguage,
+  saveDarkMode,
+  saveLanguage,
+} from "./config/storage";
+import {
+  getBrowserLanguage,
+  type Language,
+  languageOptions,
+} from "./i18n/languages";
+import { fallbackMessages, loadLanguageMessages } from "./i18n/messages";
+import { publicAssetPath } from "./utils/assets";
+import { updateFavicon, updateThemeColor } from "./utils/documentHead";
 import "./ErrorPage.css";
-
-const languageOptions = [
-  { value: "en", label: "English" },
-  { value: "ko", label: "한국어" },
-  { value: "ja", label: "日本語" },
-  { value: "zh-cn", label: "简体中文" },
-  { value: "zh-tw", label: "繁體中文" },
-  { value: "de", label: "Deutsch" },
-  { value: "fr", label: "Français" },
-  { value: "ar", label: "العربية" },
-] as const;
-
-type Language = (typeof languageOptions)[number]["value"];
-
-type LanguageMessages = {
-  error: Record<string, string>;
-  etc: {
-    dark_btn: string;
-  };
-};
 
 type ErrorPageProps = {
   errorCode?: string;
 };
 
-const supportedLanguages = languageOptions.map(({ value }) => value);
-
-const languageFiles: Record<Language, string> = {
-  ar: "ar",
-  de: "de",
-  en: "en",
-  fr: "fr",
-  ja: "ja",
-  ko: "ko",
-  "zh-cn": "zh_cn",
-  "zh-tw": "zh_tw",
-};
-
-const languageLoaders = import.meta.glob<LanguageMessages>("./langs/*.json", {
-  import: "default",
-});
-
-const fallbackMessages: LanguageMessages = {
-  error: {
-    unknown:
-      "An unknown error has occurred. The exact cause is unknown. Please contact the administrator.",
-  },
-  etc: {
-    dark_btn: "Toggle Light/Dark Mode",
-  },
-};
-
-function isSupportedLanguage(value: string): value is Language {
-  return supportedLanguages.some((language) => language === value);
-}
-
 function getInitialLanguage(): Language {
-  try {
-    const savedLanguage = localStorage.getItem("language");
-
-    if (savedLanguage && isSupportedLanguage(savedLanguage)) {
-      return savedLanguage;
-    }
-  } catch (error) {
-    console.error("Failed to get initial language", error);
-  }
-
-  const navigatorWithUserLanguage = navigator as Navigator & {
-    userLanguage?: string;
-  };
-  const browserLanguage = (
-    navigator.language ||
-    navigatorWithUserLanguage.userLanguage ||
-    "en"
-  ).toLowerCase();
-
-  if (isSupportedLanguage(browserLanguage)) {
-    return browserLanguage;
-  }
-
-  const languagePrefix = browserLanguage.split("-")[0];
-  return (
-    languageOptions.find((option) => option.value.startsWith(languagePrefix))
-      ?.value ?? "en"
-  );
+  return getStoredLanguage() ?? getBrowserLanguage();
 }
 
-function getInitialMode(): boolean {
-  try {
-    return localStorage.getItem("darkMode") === "true";
-  } catch (error) {
-    console.error("Failed to get initial mode", error);
-    return false;
-  }
-}
+function getInitialDarkMode() {
+  const storedDarkMode = getStoredDarkMode();
 
-async function loadLanguageMessages(language: Language) {
-  const fileName = languageFiles[language];
-  const loader = languageLoaders[`./langs/${fileName}.json`];
-
-  if (!loader) {
-    return fallbackMessages;
+  if (storedDarkMode !== undefined) {
+    return storedDarkMode;
   }
 
-  return loader();
-}
-
-function updateThemeColor(color: string) {
-  let metaThemeColor = document.querySelector<HTMLMetaElement>(
-    "meta[name='theme-color']",
-  );
-
-  if (!metaThemeColor) {
-    metaThemeColor = document.createElement("meta");
-    metaThemeColor.name = "theme-color";
-    document.head.appendChild(metaThemeColor);
-  }
-
-  metaThemeColor.content = color;
-}
-
-function updateFavicon() {
-  let link = document.querySelector<HTMLLinkElement>("link[rel*='icon']");
-
-  if (!link) {
-    link = document.createElement("link");
-    document.head.appendChild(link);
-  }
-
-  link.type = "image/png";
-  link.rel = "shortcut icon";
-  link.href = "/res/favicon/1.png";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
 
 export default function ErrorPage({ errorCode }: ErrorPageProps) {
+  const { customMessage, homeUrl } = getPageQueryParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [darkBtnText, setDarkBtnText] = useState(fallbackMessages.etc.dark_btn);
   const [language, setLanguage] = useState<Language>(getInitialLanguage);
-  const [darkMode, setDarkMode] = useState(getInitialMode);
+  const [darkMode, setDarkMode] = useState(getInitialDarkMode);
 
   useEffect(() => {
     let isCurrent = true;
@@ -153,13 +53,15 @@ export default function ErrorPage({ errorCode }: ErrorPageProps) {
         }
 
         const errorKey = errorCode ?? "unknown";
-        setErrorMessage(messages.error[errorKey] ?? messages.error.unknown);
+        setErrorMessage(
+          customMessage ?? messages.error[errorKey] ?? messages.error.unknown,
+        );
         setDarkBtnText(messages.etc.dark_btn);
       } catch (error) {
         console.error("Failed to load language file", error);
 
         if (isCurrent) {
-          setErrorMessage(fallbackMessages.error.unknown);
+          setErrorMessage(customMessage ?? fallbackMessages.error.unknown);
           setDarkBtnText(fallbackMessages.etc.dark_btn);
         }
       }
@@ -170,7 +72,7 @@ export default function ErrorPage({ errorCode }: ErrorPageProps) {
     return () => {
       isCurrent = false;
     };
-  }, [language, errorCode]);
+  }, [language, errorCode, customMessage]);
 
   useEffect(() => {
     document.title = errorCode ? `Error ${errorCode}` : "Unknown Error";
@@ -180,57 +82,75 @@ export default function ErrorPage({ errorCode }: ErrorPageProps) {
 
   function handleLanguageChange(value: Language) {
     setLanguage(value);
-
-    try {
-      localStorage.setItem("language", value);
-    } catch (error) {
-      console.error("Failed to set language", error);
-    }
+    saveLanguage(value);
   }
 
   function toggleDarkMode() {
     setDarkMode((previousMode) => {
       const nextMode = !previousMode;
-
-      try {
-        localStorage.setItem("darkMode", String(nextMode));
-      } catch (error) {
-        console.error("Failed to set dark mode", error);
-      }
-
+      saveDarkMode(nextMode);
       return nextMode;
     });
   }
 
   return (
-    <div className={`error-container ${darkMode ? "dark-mode" : "light-mode"}`}>
+    <main
+      className={`error-container ${darkMode ? "dark-mode" : "light-mode"}`}
+    >
+      <fieldset className="settings-container">
+        <legend className="sr-only">Page settings</legend>
+        <label className="language-field">
+          <span className="sr-only">Language</span>
+          <select
+            aria-label="Language"
+            className="language-select"
+            value={language}
+            onChange={(event) =>
+              handleLanguageChange(event.currentTarget.value as Language)
+            }
+          >
+            {languageOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          className="icon-button"
+          type="button"
+          onClick={toggleDarkMode}
+          aria-label={darkBtnText}
+          title={darkBtnText}
+        >
+          {darkMode ? (
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 18.5A6.5 6.5 0 1 0 12 5.5a6.5 6.5 0 0 0 0 13Z" />
+              <path d="M12 1.75v2.5M12 19.75v2.5M4.75 4.75l1.75 1.75M17.5 17.5l1.75 1.75M1.75 12h2.5M19.75 12h2.5M4.75 19.25 6.5 17.5M17.5 6.5l1.75-1.75" />
+            </svg>
+          ) : (
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M20.5 15.25A8.6 8.6 0 0 1 8.75 3.5 8.6 8.6 0 1 0 20.5 15.25Z" />
+            </svg>
+          )}
+        </button>
+      </fieldset>
+
       <img
-        src={errorCode ? "/res/characters/1.png" : "/res/characters/2.png"}
+        src={publicAssetPath(
+          errorCode ? "res/characters/1.png" : "res/characters/2.png",
+        )}
         alt="캐릭터"
         className="error-image"
       />
-      <div className="error-message">{errorCode ?? "Unknown Page"}</div>
+      <h1 className="error-message">{errorCode ?? "Unknown Page"}</h1>
       <p className="error-detail">{errorMessage}</p>
 
-      <div className="settings-container">
-        <select
-          aria-label="Language"
-          className="language-select"
-          value={language}
-          onChange={(event) =>
-            handleLanguageChange(event.currentTarget.value as Language)
-          }
-        >
-          {languageOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <button className="mode-button" type="button" onClick={toggleDarkMode}>
-          {darkBtnText}
-        </button>
-      </div>
-    </div>
+      {homeUrl ? (
+        <a className="home-link" href={homeUrl}>
+          Home
+        </a>
+      ) : null}
+    </main>
   );
 }

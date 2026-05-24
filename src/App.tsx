@@ -1,13 +1,12 @@
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 
+import { normalizeErrorCode } from "./config/errors";
 import ErrorPage from "./ErrorPage";
 
 function ErrorCodeRoute() {
   const { errorCode } = useParams<{ errorCode: string }>();
-  const numericErrorCode =
-    errorCode && /^\d+$/.test(errorCode) ? errorCode : undefined;
 
-  return <ErrorPage errorCode={numericErrorCode} />;
+  return <ErrorPage errorCode={normalizeErrorCode(errorCode)} />;
 }
 
 export default function App() {
