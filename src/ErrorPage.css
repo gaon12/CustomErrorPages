@@ -50,8 +50,39 @@
 .settings-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 20px; /* 컴포넌트 간의 간격 */
   margin-bottom: 20px; /* 설정 컨테이너와 이미지 간 간격 */
+}
+
+.language-select,
+.mode-button {
+  min-height: 36px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.language-select {
+  width: 140px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  color: #2c3e50;
+  padding: 0 32px 0 12px;
+}
+
+.mode-button {
+  border: 1px solid #1677ff;
+  background: #1677ff;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0 15px;
+}
+
+.mode-button:hover {
+  background: #4096ff;
+  border-color: #4096ff;
 }
 
 /* 다크 모드에 대응하는 미디어 쿼리 */
